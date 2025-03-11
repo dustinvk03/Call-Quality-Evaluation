@@ -20,7 +20,7 @@ def process_audio_file(uploaded_file, prompt):
         print(f"Processing: {file_path}")
         
         # Generate content with the file and prompt
-        model = genai.GenerativeModel('gemini-1.5-pro')
+        model = genai.GenerativeModel('gemini-2.0-flash')
         
         # Read file content
         with open(file_path, "rb") as f:
