@@ -1,7 +1,3 @@
 streamlit>=1.26.0
-os
-json
-time
 pandas
-google.generativeai
-pathlib
+google-generativeai
