@@ -139,7 +139,7 @@ def display_evaluation_results(result):
 # Streamlit App
 st.set_page_config(page_title="Audio Evaluation Tool", layout="wide")
 
-st.title("Call Quality Evaluation Tool")
+st.title("Call Quality Evaluation Tool With Dustin")
 st.write("Upload a WAV file to analyze call quality metrics")
 
 # API Key input (secure)
