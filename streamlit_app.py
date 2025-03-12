@@ -6,8 +6,8 @@ import pandas as pd
 import google.generativeai as genai
 from pathlib import Path
 
-def process_audio_file(uploaded_file, prompt):
-    """Process a single audio file and return the evaluation JSON"""
+def process_audio_file(uploaded_file, prompt, temperature):
+    """Process a single audio file and return the evaluation JSON and transcription"""
     try:
         # Create a temporary file
         temp_file_path = f"temp_{uploaded_file.name}"
@@ -19,20 +19,60 @@ def process_audio_file(uploaded_file, prompt):
         
         print(f"Processing: {file_path}")
         
-        # Generate content with the file and prompt
-        model = genai.GenerativeModel('gemini-2.0-flash')
+        # Generate transcription first
+        transcription_model = genai.GenerativeModel('gemini-2.0-flash', generation_config={"temperature": temperature})
         
         # Read file content
         with open(file_path, "rb") as f:
             file_content = f.read()
         
-        # Create multipart content with text and audio
-        response = model.generate_content(
+        # Get transcription with speaker diarization
+        transcription_prompt = """
+        Transcribe this audio file with speaker diarization. 
+        Identify three different speakers: 
+        1. Agent (the caller/fundraiser)
+        2. Donor (the call receiver)
+        3. Supervisor (if present)
+        
+        Format the transcription as a JSON with the following structure:
+        {
+            "transcription": [
+                {"speaker": "Agent", "text": "speaker text here", "timestamp": "MM:SS-MM:SS"},
+                {"speaker": "Donor", "text": "speaker text here", "timestamp": "MM:SS-MM:SS"},
+                ...
+            ]
+        }
+        
+        Include approximate timestamps for each speaker turn in MM:SS-MM:SS format.
+        """
+        
+        transcription_response = transcription_model.generate_content(
+            [transcription_prompt, {"mime_type": "audio/wav", "data": file_content}]
+        )
+        
+        # Parse transcription
+        transcription_text = transcription_response.text
+        
+        # Clean up JSON string
+        transcription_json_str = transcription_text.strip()
+        if transcription_json_str.startswith("```json"):
+            transcription_json_str = transcription_json_str[7:-3] if transcription_json_str.endswith("```") else transcription_json_str[7:]
+        elif transcription_json_str.startswith("```"):
+            transcription_json_str = transcription_json_str[3:-3] if transcription_json_str.endswith("```") else transcription_json_str[3:]
+            
+        # Parse transcription JSON
+        transcription_result = json.loads(transcription_json_str)
+        
+        # Generate evaluation with the file and prompt
+        evaluation_model = genai.GenerativeModel('gemini-2.0-flash', generation_config={"temperature": temperature})
+        
+        # Create multipart content with text and audio for evaluation
+        evaluation_response = evaluation_model.generate_content(
             [prompt, {"mime_type": "audio/wav", "data": file_content}]
         )
         
         # Save raw response for debugging purposes
-        raw_response = response.text
+        raw_response = evaluation_response.text
         
         # Parse the JSON response
         json_str = raw_response.strip()
@@ -48,10 +88,13 @@ def process_audio_file(uploaded_file, prompt):
         # Ensure filename is correctly set in the output
         result['audio_file_name'] = uploaded_file.name
         
+        # Add transcription to the result
+        result['transcription'] = transcription_result.get('transcription', [])
+        
         # Clean up temporary file
         os.remove(temp_file_path)
             
-        return result, raw_response
+        return result, raw_response, transcription_result
     
     except Exception as e:
         # Clean up temporary file if it exists
@@ -64,7 +107,7 @@ def process_audio_file(uploaded_file, prompt):
         return {
             "audio_file_name": uploaded_file.name,
             "error": error_msg
-        }, error_msg
+        }, error_msg, {"transcription": []}
 
 def display_evaluation_results(result):
     """Display the evaluation results in Streamlit with highlighted failed criteria"""
@@ -136,14 +179,94 @@ def display_evaluation_results(result):
                 unsafe_allow_html=True
             )
 
+def display_transcription(transcription):
+    """Display the transcription with speaker separation"""
+    st.subheader("Call Transcription")
+    
+    # Create tabs for different views
+    tab1, tab2 = st.tabs(["All Speakers", "By Speaker"])
+    
+    with tab1:
+        # Display all speakers in sequence
+        for entry in transcription:
+            speaker = entry.get("speaker", "Unknown")
+            text = entry.get("text", "")
+            timestamp = entry.get("timestamp", "")
+            
+            # Color code by speaker
+            if speaker.lower() == "agent":
+                color = "#E3F2FD"  # Light blue for agent
+                border = "#2196F3"
+            elif speaker.lower() == "donor":
+                color = "#FFF3E0"  # Light orange for donor
+                border = "#FF9800"
+            elif speaker.lower() == "supervisor":
+                color = "#E8F5E9"  # Light green for supervisor
+                border = "#4CAF50"
+            else:
+                color = "#F5F5F5"  # Light grey for unknown
+                border = "#9E9E9E"
+            
+            st.markdown(
+                f"""
+                <div style="background-color:{color}; border-left:4px solid {border}; padding:10px; border-radius:4px; margin-bottom:8px;">
+                    <p><strong>{speaker}</strong> <span style="color:#616161; font-size:0.8em;">({timestamp})</span></p>
+                    <p>{text}</p>
+                </div>
+                """, 
+                unsafe_allow_html=True
+            )
+    
+    with tab2:
+        # Group by speaker
+        speakers = {}
+        for entry in transcription:
+            speaker = entry.get("speaker", "Unknown")
+            if speaker not in speakers:
+                speakers[speaker] = []
+            speakers[speaker].append(entry)
+        
+        # Create columns for each speaker
+        speaker_tabs = st.tabs(list(speakers.keys()))
+        
+        for i, (speaker, entries) in enumerate(speakers.items()):
+            with speaker_tabs[i]:
+                for entry in entries:
+                    text = entry.get("text", "")
+                    timestamp = entry.get("timestamp", "")
+                    
+                    st.markdown(
+                        f"""
+                        <div style="padding:10px; border-bottom:1px solid #e0e0e0; margin-bottom:5px;">
+                            <p><span style="color:#616161; font-size:0.8em;">({timestamp})</span></p>
+                            <p>{text}</p>
+                        </div>
+                        """, 
+                        unsafe_allow_html=True
+                    )
+
 # Streamlit App
 st.set_page_config(page_title="Audio Evaluation Tool", layout="wide")
 
 st.title("Call Quality Evaluation Tool With Dustin")
-st.write("Upload a WAV file to analyze call quality metrics")
+st.write("Upload a WAV file to analyze call quality metrics and get transcription")
 
 # API Key input (secure)
 api_key = st.text_input("Enter your Google AI API Key", type="password")
+
+# Two columns for settings
+col1, col2 = st.columns(2)
+
+with col1:
+    # Temperature parameter
+    temperature = st.slider(
+        "Gemini AI Temperature", 
+        min_value=0.0, 
+        max_value=1.0, 
+        value=0.2,
+        step=0.1,
+        help="Controls randomness in results. Lower values make output more focused, higher values make it more creative."
+    )
 
 # Prompt input with default
 default_prompt = """Analyze this call recording and evaluate it against the following criteria. Provide your results in JSON format:
@@ -160,21 +283,39 @@ if uploaded_file is not None and api_key and prompt:
     genai.configure(api_key=api_key)
     
     with st.spinner("Processing audio file..."):
-        result, raw_response = process_audio_file(uploaded_file, prompt)
+        result, raw_response, transcription_result = process_audio_file(uploaded_file, prompt, temperature)
     
-    # Display the results
-    display_evaluation_results(result)
+    # Create tabs for Evaluation and Transcription
+    tab1, tab2 = st.tabs(["Evaluation Results", "Transcription"])
     
-    # Option to download the JSON result
-    st.download_button(
-        label="Download JSON Result",
-        data=json.dumps(result, indent=2),
-        file_name=f"{os.path.splitext(uploaded_file.name)[0]}_evaluation.json",
-        mime="application/json"
-    )
+    with tab1:
+        # Display the evaluation results
+        display_evaluation_results(result)
+        
+        # Option to download the JSON result
+        st.download_button(
+            label="Download Evaluation JSON",
+            data=json.dumps(result, indent=2),
+            file_name=f"{os.path.splitext(uploaded_file.name)[0]}_evaluation.json",
+            mime="application/json"
+        )
+        
+        # Show raw response in expander
+        with st.expander("View Raw Evaluation API Response"):
+            st.text(raw_response)
     
-    # Show raw response in expander
-    with st.expander("View Raw API Response"):
-        st.text(raw_response)
+    with tab2:
+        # Display the transcription
+        display_transcription(result.get('transcription', []))
+        
+        # Option to download transcription JSON
+        transcription_json = {"transcription": result.get('transcription', [])}
+        st.download_button(
+            label="Download Transcription JSON",
+            data=json.dumps(transcription_json, indent=2),
+            file_name=f"{os.path.splitext(uploaded_file.name)[0]}_transcription.json",
+            mime="application/json"
+        )
+        
 elif uploaded_file is not None:
     st.warning("Please enter your Google AI API key and evaluation prompt to process the file.")
