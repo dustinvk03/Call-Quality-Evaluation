@@ -303,6 +303,70 @@ if uploaded_file is not None and api_key and prompt:
         # Show raw response in expander
         with st.expander("View Raw Evaluation API Response"):
             st.text(raw_response)
+
+
+                # Add a table view of criteria
+        # Add a table view of criteria
+        with st.expander("View Criteria Table"):
+            # Create a DataFrame from the criteria evaluation data
+            criteria_data = []
+            calculated_points_lost = 0
+            
+            for item in result["criteria_evaluation"]:
+                # Get weight, defaulting to 0 if not present
+                weight = item.get('weight', 0)
+                try:
+                    # Try to convert to float if it's a number
+                    weight = float(weight)
+                except (ValueError, TypeError):
+                    weight = 0
+                    
+                # Add to points lost if status is "Not Met"
+                if item['status'].lower() == 'not met':
+                    calculated_points_lost += weight
+                    
+                criteria_data.append({
+                    "Criterion": item['criterion'],
+                    "Weight": weight,
+                    "Status": item['status'],
+                    "Evidence": item['evidence'],
+                    "Notes": item.get('notes', '')  # In case notes is not present
+                })
+            
+            # Create DataFrame from the collected data
+            criteria_df = pd.DataFrame(criteria_data)
+            
+            # Display the table
+            st.dataframe(criteria_df, use_container_width=True)
+            
+            # Display total points lost (calculated from weights)
+            st.markdown(f"**Total Points Lost:** {calculated_points_lost}")
+            
+            # Determine high penalty status based on total points lost
+            # You can adjust the threshold as needed
+            high_penalty_threshold = 20  # Example threshold
+            high_penalty = calculated_points_lost >= high_penalty_threshold
+            
+            # Display high penalty status with color
+            color = "red" if high_penalty else "green"
+            status_text = "YES - High Penalty" if high_penalty else "NO - No High Penalty"
+            
+            st.markdown(
+                f"<div style='background-color:{color}; padding:5px; border-radius:5px; display:inline-block;'>"
+                f"<p style='color:white; margin:0; padding:5px;'><strong>High Penalty: {status_text}</strong></p></div>", 
+                unsafe_allow_html=True
+            )
+            
+            # Convert DataFrame to CSV for download
+            csv = criteria_df.to_csv(index=False)
+            
+            # Download button for CSV
+            st.download_button(
+                label="Download Criteria as CSV",
+                data=csv,
+                file_name=f"{os.path.splitext(uploaded_file.name)[0]}_criteria.csv",
+                mime="text/csv"
+            )
     
     with tab2:
         # Display the transcription
