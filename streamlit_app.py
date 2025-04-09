@@ -338,7 +338,7 @@ if uploaded_file is not None and api_key and prompt:
             
             # Display the table
             st.dataframe(criteria_df, use_container_width=True)
-            
+            calculated_points_lost = np.abs(calculated_points_lost)
             # Display total points lost (calculated from weights)
             st.markdown(f"**Total Points Lost:** {calculated_points_lost}")
             
