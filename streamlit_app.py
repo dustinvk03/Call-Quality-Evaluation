@@ -5,6 +5,7 @@ import time
 import pandas as pd
 import google.generativeai as genai
 from pathlib import Path
+import numpy as np
 
 def process_audio_file(uploaded_file, prompt, temperature):
     """Process a single audio file and return the evaluation JSON and transcription"""
