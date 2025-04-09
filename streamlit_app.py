@@ -123,24 +123,24 @@ def display_evaluation_results(result):
     with col1:
         st.metric(label="Call Length", value=result.get("call_length", "N/A"))
     
-    with col2:
-        # Show points lost with color based on severity
-        points_lost = result["evaluation_summary"]["total_points_lost"]
-        st.metric(
-            label="Total Points Lost", 
-            value=points_lost,
-            delta=None
-        )
+    # with col2:
+    #     # Show points lost with color based on severity
+    #     points_lost = result["evaluation_summary"]["total_points_lost"]
+    #     st.metric(
+    #         label="Total Points Lost", 
+    #         value=points_lost,
+    #         delta=None
+    #     )
     
-    with col3:
-        high_penalty = result["evaluation_summary"]["high_penalty_flag"]
-        color = "red" if high_penalty else "green"
-        status_text = "YES - High Penalty" if high_penalty else "NO - No High Penalty"
-        st.markdown(
-            f"<div style='background-color:{color}; padding:10px; border-radius:5px;'>"
-            f"<h3 style='color:white; text-align:center;'>High Penalty: {status_text}</h3></div>", 
-            unsafe_allow_html=True
-        )
+    # with col3:
+    #     high_penalty = result["evaluation_summary"]["high_penalty_flag"]
+    #     color = "red" if high_penalty else "green"
+    #     status_text = "YES - High Penalty" if high_penalty else "NO - No High Penalty"
+    #     st.markdown(
+    #         f"<div style='background-color:{color}; padding:10px; border-radius:5px;'>"
+    #         f"<h3 style='color:white; text-align:center;'>High Penalty: {status_text}</h3></div>", 
+    #         unsafe_allow_html=True
+    #     )
     
     # Display criteria evaluation with special highlighting for failed criteria
     st.subheader("Criteria Evaluation")
