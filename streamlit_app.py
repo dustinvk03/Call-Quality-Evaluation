@@ -248,7 +248,7 @@ def display_transcription(transcription):
 # Streamlit App
 st.set_page_config(page_title="Audio Evaluation Tool", layout="wide")
 
-st.title("Call Quality Evaluation Tool With Dustin")
+st.title("Call Quality Evaluation Tool With Dustin V2")
 st.write("Upload a WAV file to analyze call quality metrics and get transcription")
 
 # API Key input (secure)
