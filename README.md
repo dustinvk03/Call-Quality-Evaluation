@@ -3,7 +3,7 @@
 This app takes your WAV call recordings and uses Google's Gemini AI. First, it transcribes the entire conversation and figures out who said what (diarization). Then, using a prompt with your specific criteria, Gemini evaluates the call quality, giving you scores and feedback. You can easily switch between viewing the full transcript or just what each individual speaker said using handy tabs.
 For the best quality, using Gemini 2.0 Flash and above is recommended.
 
-## Look How Easy!
+## Instruction:
 The app: https://call-quality-evaluation-dzkbd6hchzb9kghhutt2fw.streamlit.app/
 **![Tool instruction](https://github.com/dustinvk03/Call-Quality-Evaluation/blob/master/how-to-use-call-quality.png)
 
@@ -33,9 +33,9 @@ Respond ONLY in valid JSON format (do not include any introductory text, explana
   "audio_file_name": "<filename_of_the_audio_evaluated.wav>",
   "call_length": "<call_duration_in_MM:SS_format>",
   "evaluation_summary": {
-    "total_points_lost": <calculated_total_negative_points>,
+    "total_points_lost": "<calculated_total_negative_points>",
     "calculation_breakdown": "<Formula_showing_how_points_were_lost, e.g., CriterionName1 (-X) + CriterionName3 (-Y) = -Z>",
-    "high_penalty_flag": <true_if_total_points_lost_exceeds_threshold_else_false>
+    "high_penalty_flag": "<true_if_total_points_lost_exceeds_threshold_else_false>"
   },
   "criteria_evaluation": [
     // Add one object here for EACH criterion defined below
