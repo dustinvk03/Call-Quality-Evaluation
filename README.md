@@ -28,6 +28,7 @@ You are an expert evaluator reviewing [Specify Type of Call, e.g., fundraising, 
 Note: The [Specify Caller Role, e.g., fundraiser, agent] DOES NOT NEED to follow any provided script examples strictly; focus on whether the core criteria are met.
 
 Respond ONLY in valid JSON format (do not include any introductory text, explanations, or markdown formatting outside the JSON structure itself) following this structure:
+```
 {
   "audio_file_name": "[filename_of_the_audio_evaluated.wav]",
   "call_length": "[call_duration_in_MM:SS_format]",
@@ -57,6 +58,7 @@ Respond ONLY in valid JSON format (do not include any introductory text, explana
     // ... Continue adding objects for ALL your criteria
   ]
 }
+```
 
 ### Evaluation Criteria & Rules:
 
