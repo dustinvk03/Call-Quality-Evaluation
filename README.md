@@ -60,12 +60,12 @@ Respond ONLY in valid JSON format (do not include any introductory text, explana
 }
 ```
 
-### Evaluation Criteria & Rules:
+**Evaluation Criteria & Rules (if you have the specific definition):
 
 (Define YOUR specific criteria here. Mark as "Not Applicable" if the caller did not have a reasonable opportunity to meet the criterion during the call.)
 
 - [Criterion Name 1] ([Weight, e.g., -2 points]): [Explain what the caller needs to do to meet this criterion. Provide clear positive/negative examples if helpful]. Example: Does caller confirm contact identity? Example: "Am I speaking with [Name]?" or "Is this [Name]?". Mark as "Met" if the donor implicitly agrees.
-- [Criterion Name 2] ([Weight, e.g., -1 point]): [Explain what the caller needs to do to meet this criterion]. Example: Proper Campaign Mention (-2): Does caller mention specific campaign/committee/candidate during intro?
+- [Criterion Name 2] ([Weight, e.g., -1 point]): [Explain what the caller needs to do to meet this criterion]. Example: Proper Campaign Mention (-2): Does caller mention specific campaign/project during intro?
 - [Criterion Name 3] ([Weight, e.g., -2 points]): [Explain what the caller needs to do to meet this criterion]. Example: Self Identification (-2): Does caller identify themselves clearly? Example: "My name is [Name]".
 ... (Add all other criteria you want evaluated)
 General Guidance for Evaluation:
