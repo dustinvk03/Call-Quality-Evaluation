@@ -59,7 +59,7 @@ Respond ONLY in valid JSON format (do not include any introductory text, explana
   ]
 }```
 
-Evaluation Criteria & Rules:
+### Evaluation Criteria & Rules:
 
 (Define YOUR specific criteria here. Mark as "Not Applicable" if the caller did not have a reasonable opportunity to meet the criterion during the call.)
 
