@@ -58,7 +58,6 @@ Respond ONLY in valid JSON format (do not include any introductory text, explana
     // ... Continue adding objects for ALL your criteria
   ]
 }```
-
 ### Evaluation Criteria & Rules:
 
 (Define YOUR specific criteria here. Mark as "Not Applicable" if the caller did not have a reasonable opportunity to meet the criterion during the call.)
@@ -84,6 +83,11 @@ Replace all bracketed placeholders ([...] and [...]) with your specific details 
 Ensure the JSON structure in the prompt exactly matches the format shown.
 List all your evaluation criteria clearly in the designated section.
 When sending the request to the Gemini API, this entire block of text (after filling in your details) becomes the prompt content, along with the call transcript itself.
+
+3.  **Run the app:**
+    ```bash
+    streamlit run streamlit_app.py
+    ```
 
 3.  **Run the app:**
     ```bash
