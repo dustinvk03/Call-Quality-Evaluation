@@ -90,8 +90,3 @@ When sending the request to the Gemini API, this entire block of text (after fil
     ```bash
     streamlit run streamlit_app.py
     ```
-
-3.  **Run the app:**
-    ```bash
-    streamlit run streamlit_app.py
-    ```
