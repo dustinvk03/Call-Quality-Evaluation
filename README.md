@@ -5,22 +5,23 @@ For the best quality, using Gemini 2.0 Flash and above is recommended.
 
 ## Look How Easy!
 The app: https://call-quality-evaluation-dzkbd6hchzb9kghhutt2fw.streamlit.app/
-**![Tool instruction](path/to/your/image.pn**https://github.com/dustinvk03/Call-Quality-Evaluation/blob/master/how-to-use-call-quality.png)
+**![Tool instruction](https://github.com/dustinvk03/Call-Quality-Evaluation/blob/master/how-to-use-call-quality.png)
 
 ## Get it Running ⚙️
 
 **You'll Need: Python 3.11 and some libraries (use pip install to install)**
+* `google.generativeai`
 * `streamlit` 
 * `json`
-* `pandas` numpy
-* `google.generativeai`
+* `numpy`
+* `pandas`
 * `pathlib`
 
 1.  **Set up your OpenAI API Key:**
     * You need an API key from [Google AI Studio](https://aistudio.google.com/app/apikey).
   
 2.  **Prompt example:**
-The Prompt You Send to Gemini Should Look Like This:
+The Prompt You Send to Gemini Should follow the format like that:
 
 You are an expert evaluator reviewing [Specify Type of Call, e.g., fundraising, customer support, sales pitch] call transcripts. Your goal is to assess the [Specify Caller Role, e.g., fundraiser's, agent's, salesperson's] performance against a detailed scorecard based only on the provided transcript and criteria.
 
@@ -29,7 +30,7 @@ Note: The [Specify Caller Role, e.g., fundraiser, agent] DOES NOT NEED to follow
 Respond ONLY in valid JSON format (do not include any introductory text, explanations, or markdown formatting outside the JSON structure itself) following this structure:
 
 JSON
-
+```json
 {
   "audio_file_name": "<filename_of_the_audio_evaluated.wav>",
   "call_length": "<call_duration_in_MM:SS_format>",
@@ -58,15 +59,15 @@ JSON
     }
     // ... Continue adding objects for ALL your criteria
   ]
-}
+}```
 
 Evaluation Criteria & Rules:
 
 (Define YOUR specific criteria here. Mark as "Not Applicable" if the caller did not have a reasonable opportunity to meet the criterion during the call.)
 
-[Criterion Name 1] (<Weight, e.g., -2 points>): [Explain what the caller needs to do to meet this criterion. Provide clear positive/negative examples if helpful]. Example: Does caller confirm contact identity? Example: "Am I speaking with [Name]?" or "Is this [Name]?". Mark as "Met" if the donor implicitly agrees.
-[Criterion Name 2] (<Weight, e.g., -1 point>): [Explain what the caller needs to do to meet this criterion]. Example: Proper Campaign Mention (-2): Does caller mention specific campaign/committee/candidate during intro?
-[Criterion Name 3] (<Weight, e.g., -2 points>): [Explain what the caller needs to do to meet this criterion]. Example: Self Identification (-2): Does caller identify themselves clearly? Example: "My name is [Name]".
+- [Criterion Name 1] (<Weight, e.g., -2 points>): [Explain what the caller needs to do to meet this criterion. Provide clear positive/negative examples if helpful]. Example: Does caller confirm contact identity? Example: "Am I speaking with [Name]?" or "Is this [Name]?". Mark as "Met" if the donor implicitly agrees.
+- [Criterion Name 2] (<Weight, e.g., -1 point>): [Explain what the caller needs to do to meet this criterion]. Example: Proper Campaign Mention (-2): Does caller mention specific campaign/committee/candidate during intro?
+- [Criterion Name 3] (<Weight, e.g., -2 points>): [Explain what the caller needs to do to meet this criterion]. Example: Self Identification (-2): Does caller identify themselves clearly? Example: "My name is [Name]".
 ... (Add all other criteria you want evaluated)
 General Guidance for Evaluation:
 
@@ -86,7 +87,7 @@ Ensure the JSON structure in the prompt exactly matches the format shown.
 List all your evaluation criteria clearly in the designated section.
 When sending the request to the Gemini API, this entire block of text (after filling in your details) becomes the prompt content, along with the call transcript itself.
 
-4.  **Run the app:**
+3.  **Run the app:**
     ```bash
     streamlit run streamlit_app.py
     ```
