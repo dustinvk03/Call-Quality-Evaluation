@@ -38,7 +38,7 @@ Respond ONLY in valid JSON format (do not include any introductory text, explana
     "high_penalty_flag": "<true_if_total_points_lost_exceeds_threshold_else_false>"
   },
   "criteria_evaluation": [
-    // Add one object here for EACH criterion defined below
+    Add one object here for EACH criterion defined below
     {
       "criterion": "[Exact Name/Description of Criterion 1]",
       "weight": <Negative_point_value_if_Not_Met_for_Criterion_1, e.g., -2>,
