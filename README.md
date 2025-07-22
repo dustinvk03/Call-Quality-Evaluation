@@ -25,7 +25,7 @@ The Prompt You Send to Gemini Should follow the format like that:
 
 You are an expert evaluator reviewing [Specify Type of Call, e.g., customer support, sales pitch] call transcripts. Your goal is to assess the [Specify Caller Role, e.g., agent's, salesperson's] performance against a detailed scorecard based only on the provided transcript and criteria.
 
-Note: The [Specify Caller Role, e.g., agent, salesperson] DOES NOT NEED to follow any provided script examples strictly; focus on whether the core criteria are met.
+Note: The [Specify Caller Role, e.g., agent, salesperson] DOES NOT NEED to follow any provided script examples strictly; focus on whether the core criteria are Satisfied.
 
 Respond ONLY in valid JSON format (do not include any introductory text, explanations, or markdown formatting outside the JSON structure itself) following this structure:
 ```
@@ -41,16 +41,16 @@ Respond ONLY in valid JSON format (do not include any introductory text, explana
     // Add one object here for EACH criterion defined below
     {
       "criterion": "[Exact Name/Description of Criterion 1]",
-      "weight": [Negative_point_value_if_Not_Met_for_Criterion_1, e.g., -2],
-      "status": "[Met | Not Met | Not Applicable]", // Choose one based on evaluation
+      "weight": [Negative_point_value_if_Not_Satisfied_for_Criterion_1, e.g., -2],
+      "status": "[Satisfied | Not Satisfied | Not Applicable]", // Choose one based on evaluation
       "evidence": "[Direct quote(s) or specific observation from the transcript supporting the status]",
       "confidence": "[High | Medium | Low]", // AI's confidence in this specific evaluation
       "notes": "[Brief explanation for the status, especially if ambiguous or 'Not Applicable']"
     },
     {
       "criterion": "[Exact Name/Description of Criterion 2]",
-      "weight": Negative_point_value_if_Not_Met_for_Criterion_2, e.g., -1,
-      "status": "Met | Not Met | Not Applicable",
+      "weight": Negative_point_value_if_Not_Satisfied_for_Criterion_2, e.g., -1,
+      "status": "Satisfied | Not Satisfied | Not Applicable",
       "evidence": "[Direct quote(s) or specific observation from the transcript supporting the status]",
       "confidence": "[High | Medium | Low]",
       "notes": "[Brief explanation for the status, especially if ambiguous or 'Not Applicable']"
@@ -64,14 +64,14 @@ Respond ONLY in valid JSON format (do not include any introductory text, explana
 
 (Define YOUR specific criteria here. Mark as "Not Applicable" if the caller did not have a reasonable opportunity to meet the criterion during the call.)
 
-- [Criterion Name 1] ([Weight, e.g., -2 points]): [Explain what the caller needs to do to meet this criterion. Provide clear positive/negative examples if helpful]. Example: Does caller confirm contact identity? Example: "Am I speaking with [Name]?" or "Is this [Name]?". Mark as "Met" if the reciver implicitly agrees.
+- [Criterion Name 1] ([Weight, e.g., -2 points]): [Explain what the caller needs to do to meet this criterion. Provide clear positive/negative examples if helpful]. Example: Does caller confirm contact identity? Example: "Am I speaking with [Name]?" or "Is this [Name]?". Mark as "Satisfied" if the reciver implicitly agrees.
 - [Criterion Name 2] ([Weight, e.g., -1 point]): [Explain what the caller needs to do to meet this criterion]. Example: Proper Campaign Mention (-2): Does caller mention specific campaign/project during intro?
 - [Criterion Name 3] ([Weight, e.g., -2 points]): [Explain what the caller needs to do to meet this criterion]. Example: Self Identification (-2): Does caller identify themselves clearly? Example: "My name is [Name]".
 ... (Add all other criteria you want evaluated)
 General Guidance for Evaluation:
 
-Prioritize giving the [Specify Caller Role, e.g., agent, salesperson] the benefit of the doubt. If ambiguity exists in the transcript or actions can be interpreted multiple ways, lean towards "Met" or "Not Applicable" rather than "Not Met." The goal is to identify significant deviations or errors.
-Calculate total_points_lost by summing the weight values ONLY for criteria marked as "Not Met". Ignore weights for "Met" and "Not Applicable".
+Prioritize giving the [Specify Caller Role, e.g., agent, salesperson] the benefit of the doubt. If ambiguity exists in the transcript or actions can be interpreted multiple ways, lean towards "Satisfied" or "Not Applicable" rather than "Not Satisfied." The goal is to identify significant deviations or errors.
+Calculate total_points_lost by summing the weight values ONLY for criteria marked as "Not Satisfied". Ignore weights for "Satisfied" and "Not Applicable".
 Set high_penalty_flag to true if total_points_lost is less than or equal to [Your Negative Point Threshold, e.g., -5] (meaning the penalty magnitude meets or exceeds your threshold). Otherwise, set it to false.
 (Optional: Include if you provide a reference script along with the transcript)
 
