@@ -31,15 +31,15 @@ def process_audio_file(uploaded_file, prompt, temperature):
         transcription_prompt = """
         Transcribe this audio file with speaker diarization. 
         Identify three different speakers: 
-        1. Agent (the caller/fundraiser)
-        2. Donor (the call receiver)
-        3. Supervisor (if present)
+        1. Caller
+        2. Receiver
+        3. Supervisor/third person (if present)
         
         Format the transcription as a JSON with the following structure:
         {
             "transcription": [
-                {"speaker": "Agent", "text": "speaker text here", "timestamp": "MM:SS-MM:SS"},
-                {"speaker": "Donor", "text": "speaker text here", "timestamp": "MM:SS-MM:SS"},
+                {"speaker": "Caller", "text": "speaker text here", "timestamp": "MM:SS-MM:SS"},
+                {"speaker": "Receiver", "text": "speaker text here", "timestamp": "MM:SS-MM:SS"},
                 ...
             ]
         }
@@ -195,11 +195,11 @@ def display_transcription(transcription):
             timestamp = entry.get("timestamp", "")
             
             # Color code by speaker
-            if speaker.lower() == "agent":
-                color = "#E3F2FD"  # Light blue for agent
+            if speaker.lower() == "caller":
+                color = "#E3F2FD"  # Light blue for receiver
                 border = "#2196F3"
-            elif speaker.lower() == "donor":
-                color = "#FFF3E0"  # Light orange for donor
+            elif speaker.lower() == "receiver":
+                color = "#FFF3E0"  # Light orange for caller
                 border = "#FF9800"
             elif speaker.lower() == "supervisor":
                 color = "#E8F5E9"  # Light green for supervisor
